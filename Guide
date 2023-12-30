@@ -1,14 +1,14 @@
-After you have installed your new BL Touch / CR Touch probe these are the easiest steps to configure your Klipper firmware to work with it. I made this guide as I did my install, so I may not cover everything. I am Installing a Creality CR Touch sensor on my Sovol SV07+.
+After you have installed your new BL Touch / CR Touch probe these are the easiest steps to configure your Klipper firmware to work with it. I made this guide as I did my install, so I may not cover everything. I am Installing a Creality CR Touch sensor on my Sovol SV07+
 
-Disclaimer, Some of this instruction is copied from the Klipper website but some i've altered and a lot I have added myself.
+Disclaimer, Some of these instructions are copied from the official Klipper website but i've altered some and am most I have added myself.
 
 A warning before you start: Avoid touching the BL-Touch pin with your bare fingers, since it is quite sensitive to finger grease. And if you do touch it, be very gentle, in order to not bend or push anything.
 
 When you turn on the printer, the BL-Touch probe should perform a self-test and move the pin up and down a couple of times. Once the self-test is completed, the pin should be retracted and the red(or blue) LED on the probe should be lit. If the light is flashing that means there is an error somewhere, probably in the wiring. 
 
-First do some tests before we get into the code,  First run BLTOUCH_DEBUG COMMAND=pin_down in your printer terminal. Verify that the pin moves down and that the probe's light turns off. Next type BLTOUCH_DEBUG COMMAND=pin_up , verify that the pin moves up, and that the light turns on again. If it's flashing then there's a problem.
+To start let's do some tests before we get into the code,  First run BLTOUCH_DEBUG COMMAND=pin_down in your printer terminal. Verify that the pin moves down and that the probe's light turns off. Next type BLTOUCH_DEBUG COMMAND=pin_up , verify that the pin moves up, and that the light turns on again. If it's flashing then there's a problem.
 The next step is to confirm that the sensor pin is working correctly.  Run BLTOUCH_DEBUG COMMAND=pin_down, verify that the pin moves down, run QUERY_PROBE, and verify that command reports "probe: open". Then while gently pushing the pin up slightly with the nail of your finger run QUERY_PROBE again. Verify the command reports "probe: TRIGGERED".
-If either query does not report the correct message then it usually indicates an incorrect wiring or configuration (though some clones may require special handling). At the completion of this test run BLTOUCH_DEBUG COMMAND=pin_up and verify that the pin moves up.
+If either query does not report the correct message then it usually indicates an incorrect wiring or configuration (some clones may require special setup). At the completion of this test run BLTOUCH_DEBUG COMMAND=pin_up and verify that the pin moves up.
 
 If the sensor light is blinking or not responding run the command BLTOUCH_DEBUG COMMAND=reset to hopefully fix the error.
 
@@ -40,7 +40,7 @@ speed: 80
 z_hop: 8                        #make sure this is increased from 5 to allow the probe to go down.
 z_hop_speed: 5
 
-Next steps are easy. Change the printer variables saved at the very very bottom of the Printer.cfg and remove the two lines related to the standard [probe] and it's optional to add these lines if you follow the same format as that area uses. 
+Next steps are easy, don't give up yet. Change the printer variables saved at the very very bottom of the Printer.cfg and remove the two lines related to the standard [probe]. Optionally you can add these lines if you follow the same format as that area uses. 
 
 #*# [bltouch]
 #*# z_offset = 8.0
@@ -49,10 +49,12 @@ Now you must also modify the code for your other printer calibration functions. 
 
     Originally I had 
 
+[z_tilt]
 z_positions: -8, 170
              260, 170
 points: -8, 170
         260, 170
+speed: 200
 horizontal_move_z: 5
 
     Now I have 
@@ -97,7 +99,7 @@ fade_end: 5.0
 mesh_pps:4,4
 move_check_distance: 3
 
-For  the screw tilt adjust change you should just keep things simple and manually move your print head with the buttons on screen and move the probe over the center of the calibration wheels, add those coordinates to the cfg as I did. 
+For the screw tilt adjust change you should just keep things simple and manually move your print head with the buttons on screen and move the probe over the center of the calibration wheels, add those coordinates to the cfg as I did. 
 
     Originally I had
 
@@ -110,8 +112,8 @@ screw3: 243, 290
 screw3_name: rear right screw
 screw4: 4, 290
 screw4_name: rear left screw
-horizontal_move_z: 5.
-speed: 200.
+horizontal_move_z: 5
+speed: 200
 screw_thread: CW-M4
 
     Now I have
@@ -128,6 +130,8 @@ screw4_name: rear left screw
 horizontal_move_z: 7
 speed: 200
 screw_thread: CW-M4
+
+The setup is now finished!!
 
 One last peace of mind is to home your printer and run this command, it will show you the raw values and deviations after a few probes. 
     PROBE_ACCURACY
@@ -151,7 +155,7 @@ gcode:
 gcode:
   QUERY_PROBE
 
-[gcode_macro Test_Probe]
+[gcode_macro Test_Accuracy]
 gcode:
   PROBE_ACCURACY
 
@@ -159,7 +163,7 @@ gcode:
 gcode:
   BLTOUCH_DEBUG COMMAND=reset
 
-I am not sure if this will work with adaptive meshing as I have not tested it yet. Sorry
+I am not sure if this will work with adaptive meshing as I have not tested it yet. However there's always a way to adapt things.  Sorry
 
 
 
